@@ -1,5 +1,6 @@
 import { Payload } from "@/types/common/schemas-to-ts/Payload"
 import { Product } from "@/types/product"
+import Image from "next/image"
 
 const fetchProducts = async () => {
   const getProducts = await fetch(
@@ -26,8 +27,13 @@ export default async function Home() {
 
             <p>{product.attributes.description}</p>
             {product.attributes.gallery.data.map((image) => (
-              <div>
-                <img src={image.attributes.formats.medium.url} alt="" />
+              <div key={image.id}>
+                <Image
+                  width={500}
+                  height={500}
+                  src={image.attributes.formats.medium.url}
+                  alt=""
+                />
               </div>
             ))}
           </div>
