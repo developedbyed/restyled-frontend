@@ -18,13 +18,13 @@ export default async function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <h1>Strapi</h1>
-      {products.data.map((product) => {
+      {products.data.map((product: any) => {
         return (
           <div key={product.id}>
             <h1>{product.attributes.title}</h1>
 
             <p>{product.attributes.description}</p>
-            {product.attributes.gallery.data.map((image) => (
+            {product.attributes.gallery.data.map((image: any) => (
               <div key={image.id}>
                 <Image
                   width={500}
