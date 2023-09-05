@@ -1,4 +1,6 @@
 import Image from "next/image"
+import { Product } from "@/types/strapi/product"
+import { Payload } from "@/types/strapi/Payload"
 
 const fetchProducts = async () => {
   const getProducts = await fetch(
@@ -7,7 +9,7 @@ const fetchProducts = async () => {
       headers: { Authorization: `Bearer ${process.env.STRAPI_KEY}` },
     }
   )
-  const products = await getProducts.json()
+  const products: Payload<Product[]> = await getProducts.json()
 
   return products
 }
@@ -18,13 +20,13 @@ export default async function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <h1>Strapi</h1>
-      {products.data.map((product: any) => {
+      {products.data.map((product) => {
         return (
           <div key={product.id}>
             <h1>{product.attributes.title}</h1>
 
             <p>{product.attributes.description}</p>
-            {product.attributes.gallery.data.map((image: any) => (
+            {product.attributes.gallery.data.map((image) => (
               <div key={image.id}>
                 <Image
                   width={500}
