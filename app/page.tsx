@@ -1,5 +1,3 @@
-import { Payload } from "@/types/common/schemas-to-ts/Payload"
-import { Product } from "@/types/product"
 import Image from "next/image"
 
 const fetchProducts = async () => {
@@ -9,7 +7,7 @@ const fetchProducts = async () => {
       headers: { Authorization: `Bearer ${process.env.STRAPI_KEY}` },
     }
   )
-  const products: Payload<Product[]> = await getProducts.json()
+  const products = await getProducts.json()
 
   return products
 }
