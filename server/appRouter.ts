@@ -5,7 +5,7 @@ export const appRouter = router({
   getProducts: publicProcedure.query(async () => {
     return await fetchProducts()
   }),
-  getTodos: protectedProcedure.query(({ ctx }) => {
+  getTodos: publicProcedure.query(({ ctx }) => {
     console.log(`router: ${ctx.auth.userId}`)
     return [10, 20, 30]
   }),

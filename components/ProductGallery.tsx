@@ -4,7 +4,7 @@ import { Product } from "@/types/strapi/product"
 import Image from "next/image"
 
 export default async function ProductGallery() {
-  const products: Payload<Product[]> = await fetchProducts()
+  const products = await fetchProducts()
   return (
     <div>
       {products.data.map((product) => (
