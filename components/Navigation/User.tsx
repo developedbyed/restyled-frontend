@@ -1,12 +1,20 @@
 "use client"
 
-import { SignIn } from "@clerk/nextjs"
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
+import { Button } from "../ui/button"
+import { FaUserAlt } from "react-icons/fa"
 
 export default function User() {
   return (
     <div>
-      <h1>User</h1>
-      <SignIn />
+      <SignedOut>
+        <SignInButton mode="modal">
+          <FaUserAlt />
+        </SignInButton>
+      </SignedOut>
+      <SignedIn>
+        <UserButton />
+      </SignedIn>
     </div>
   )
 }

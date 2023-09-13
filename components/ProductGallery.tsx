@@ -8,9 +8,7 @@ export default async function ProductGallery() {
   return (
     <div>
       {products.data.map((product) => (
-        <div key={product.id}>
-          <h1>{product.attributes.title}</h1>
-          <p>{product.attributes.description}</p>
+        <div className="text-center" key={product.id}>
           <Image
             width={800}
             height={800}
@@ -19,6 +17,8 @@ export default async function ProductGallery() {
             }
             alt="Patterned Journal"
           />
+          <h2>{product.attributes.title}</h2>
+          <p>{product.attributes.description}</p>
         </div>
       ))}
     </div>
