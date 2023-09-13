@@ -5,5 +5,5 @@ export const config = {
 }
 
 export default authMiddleware({
-  publicRoutes: ["/", "/api/trpc/getTodos", "/api/trpc/getProducts"],
+  publicRoutes: ["/", "/api/(.*)"],
 })
