@@ -1,5 +1,3 @@
-import { drizzle } from "drizzle-orm/vercel-postgres"
-import { sql } from "@vercel/postgres"
 import { InferSelectModel } from "drizzle-orm"
 import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core"
 
@@ -8,6 +6,7 @@ export const users = pgTable("users", {
   name: text("name").notNull(),
   email: text("email").notNull(),
   image: text("image").notNull(),
+  stripeCustomer: text("stripeCustomer").notNull().unique(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 })
 

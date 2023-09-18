@@ -2,6 +2,7 @@ import * as trpc from "@trpc/server"
 import * as trpcNext from "@trpc/server/adapters/next"
 import { getAuth } from "@clerk/nextjs/server"
 import type { SignedInAuthObject, SignedOutAuthObject } from "@clerk/nextjs/api"
+import { db } from "./db/index"
 
 interface AuthContext {
   auth: SignedInAuthObject | SignedOutAuthObject
@@ -10,6 +11,7 @@ interface AuthContext {
 export const createContextInner = async ({ auth }: AuthContext) => {
   return {
     auth,
+    db,
   }
 }
 

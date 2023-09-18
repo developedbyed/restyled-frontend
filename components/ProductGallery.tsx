@@ -1,24 +1,29 @@
 import { fetchProducts } from "@/lib/fetchProducts"
-import { Payload } from "@/types/strapi/Payload"
-import { Product } from "@/types/strapi/product"
 import Image from "next/image"
+import Link from "next/link"
+import { serverTRPC } from "@/app/_trpc/trpc_server"
 
 export default async function ProductGallery() {
-  const products = await fetchProducts()
+  const { data } = await serverTRPC.getProducts.query()
   return (
-    <div>
-      {products.data.map((product) => (
+    <div className="flex  flex-wrap justify-center gap-12">
+      {data.map((product) => (
         <div className="text-center" key={product.id}>
-          <Image
-            width={800}
-            height={800}
-            src={
-              product.attributes.gallery.data[0].attributes.formats.medium.url
-            }
-            alt="Patterned Journal"
-          />
-          <h2>{product.attributes.title}</h2>
-          <p>{product.attributes.description}</p>
+          <Link href={`/product/${product.id}`}>
+            <Image
+              width={480}
+              height={480}
+              className="rounded-md"
+              src={
+                product.attributes.gallery.data[0].attributes.formats.medium.url
+              }
+              alt={
+                product.attributes.gallery.data[0].attributes.alternativeText
+              }
+            />
+          </Link>
+          <h2 className="font-bold pt-2">{product.attributes.title}</h2>
+          <p>{product.attributes.subtitle}</p>
         </div>
       ))}
     </div>

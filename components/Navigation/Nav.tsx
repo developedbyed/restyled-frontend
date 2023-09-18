@@ -5,7 +5,7 @@ import { FaShoppingCart } from "react-icons/fa"
 
 export default function Nav() {
   return (
-    <header className="bg-black text-white p-6">
+    <header className="bg-black text-white p-6 px-48">
       <nav>
         <ul className="flex justify-between">
           <li>
