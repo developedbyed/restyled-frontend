@@ -10,7 +10,8 @@ export default function Carousel({ images }: { images: Media[] }) {
     loop: true,
   });
   const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel({
-    axis: "y",
+    dragFree: true,
+    align: "start",
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -42,25 +43,8 @@ export default function Carousel({ images }: { images: Media[] }) {
   }, [emblaMainApi, onSelect]);
 
   return (
-    <div className="flex">
-      <div className="" ref={emblaThumbsRef}>
-        <div>
-          {images.map((image, index) => (
-            <Image
-              onClick={() => onThumbClick(index)}
-              width={640}
-              height={640}
-              className={`${
-                selectedIndex !== index ? "opacity-25" : "opacity-100"
-              } transition-opacity duration-500  `}
-              key={image.id}
-              src={image.attributes.formats.small.url}
-              alt={image.attributes.alternativeText}
-            />
-          ))}
-        </div>
-      </div>
-      <div className="flex embla  bg-red-200 relative ">
+    <>
+      <div className="flex embla ">
         <div className="embla__viewport" ref={emblaRef}>
           <div className="embla__container ">
             {images.map((image, index) => (
@@ -76,6 +60,23 @@ export default function Carousel({ images }: { images: Media[] }) {
           </div>
         </div>
       </div>
-    </div>
+      <div className=" overflow-hidden " ref={emblaThumbsRef}>
+        <div className="flex">
+          {images.map((image, index) => (
+            <Image
+              onClick={() => onThumbClick(index)}
+              width={160}
+              height={160}
+              className={`${
+                selectedIndex !== index ? "opacity-25" : "opacity-100"
+              } transition-opacity duration-500 flex-1`}
+              key={image.id}
+              src={image.attributes.formats.small.url}
+              alt={image.attributes.alternativeText}
+            />
+          ))}
+        </div>
+      </div>
+    </>
   );
 }

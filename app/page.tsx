@@ -1,10 +1,9 @@
-import ProductGallery from "@/components/ProductGallery"
-import TodoList from "@/components/TodoList"
+import ProductGallery from "@/components/ProductGallery";
 
 export default async function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between py-12">
+    <main className="py-12">
       <ProductGallery />
     </main>
-  )
+  );
 }

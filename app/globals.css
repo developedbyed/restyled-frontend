@@ -64,6 +64,10 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
   }
+  p {
+    line-height: 2;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+  }
 }
 
 @layer base {

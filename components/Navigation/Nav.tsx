@@ -1,11 +1,11 @@
-"use client"
-import Link from "next/link"
-import User from "./User"
-import { FaShoppingCart } from "react-icons/fa"
+"use client";
+import Link from "next/link";
+import User from "./User";
+import { FaShoppingCart } from "react-icons/fa";
 
 export default function Nav() {
   return (
-    <header className="bg-black text-white p-6 px-48">
+    <header className="bg-black text-white p-6">
       <nav>
         <ul className="flex justify-between">
           <li>
@@ -22,5 +22,5 @@ export default function Nav() {
         </ul>
       </nav>
     </header>
-  )
+  );
 }

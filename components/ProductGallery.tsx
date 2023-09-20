@@ -1,19 +1,18 @@
-import { fetchProducts } from "@/lib/fetchProducts"
-import Image from "next/image"
-import Link from "next/link"
-import { serverTRPC } from "@/app/_trpc/trpc_server"
+import Image from "next/image";
+import Link from "next/link";
+import { serverTRPC } from "@/app/_trpc/trpc_server";
 
 export default async function ProductGallery() {
-  const { data } = await serverTRPC.getProducts.query()
+  const { data } = await serverTRPC.getProducts.query();
   return (
-    <div className="flex  flex-wrap justify-center gap-12">
+    <div className="flex flex-wrap justify-center gap-12">
       {data.map((product) => (
-        <div className="text-center" key={product.id}>
-          <Link href={`/product/${product.id}`}>
+        <div className="text-center basis-64 flex-1" key={product.id}>
+          <Link className="" href={`/product/${product.id}`}>
             <Image
               width={480}
               height={480}
-              className="rounded-md"
+              className="rounded-md w-full object-cover"
               src={
                 product.attributes.gallery.data[0].attributes.formats.medium.url
               }
@@ -27,5 +26,5 @@ export default async function ProductGallery() {
         </div>
       ))}
     </div>
-  )
+  );
 }
