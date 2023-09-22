@@ -6,6 +6,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { useEffect, useState, useCallback } from "react";
 
 export default function Carousel({ images }: { images: Media[] }) {
+  console.log(images.length);
   const [emblaRef, emblaMainApi] = useEmblaCarousel({
     loop: true,
   });
@@ -43,7 +44,7 @@ export default function Carousel({ images }: { images: Media[] }) {
   }, [emblaMainApi, onSelect]);
 
   return (
-    <>
+    <div className="max-w-lg">
       <div className="flex embla ">
         <div className="embla__viewport" ref={emblaRef}>
           <div className="embla__container ">
@@ -60,23 +61,25 @@ export default function Carousel({ images }: { images: Media[] }) {
           </div>
         </div>
       </div>
-      <div className=" overflow-hidden " ref={emblaThumbsRef}>
-        <div className="flex">
-          {images.map((image, index) => (
-            <Image
-              onClick={() => onThumbClick(index)}
-              width={160}
-              height={160}
-              className={`${
-                selectedIndex !== index ? "opacity-25" : "opacity-100"
-              } transition-opacity duration-500 flex-1`}
-              key={image.id}
-              src={image.attributes.formats.small.url}
-              alt={image.attributes.alternativeText}
-            />
-          ))}
+      {images.length >= 1 && (
+        <div className="overflow-hidden" ref={emblaThumbsRef}>
+          <div className="flex">
+            {images.map((image, index) => (
+              <Image
+                onClick={() => onThumbClick(index)}
+                width={160}
+                height={160}
+                className={`${
+                  selectedIndex !== index ? "opacity-25" : "opacity-100"
+                } transition-opacity duration-500 flex-1`}
+                key={image.id}
+                src={image.attributes.formats.small.url}
+                alt={image.attributes.alternativeText}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 }

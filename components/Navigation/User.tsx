@@ -1,8 +1,7 @@
-"use client"
+"use client";
 
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
-import { Button } from "../ui/button"
-import { FaUserAlt } from "react-icons/fa"
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { FaUserAlt } from "react-icons/fa";
 
 export default function User() {
   return (
@@ -16,5 +15,5 @@ export default function User() {
         <UserButton />
       </SignedIn>
     </div>
-  )
+  );
 }

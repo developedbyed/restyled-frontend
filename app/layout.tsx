@@ -1,10 +1,10 @@
 import Nav from "@/components/Navigation/Nav";
-import "./globals.css";
+import "@/app/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Provider from "./_trpc/Provider";
 import { ClerkProvider } from "@clerk/nextjs";
-
+import { TRPCReactProvider } from "./Provider";
+import { headers } from "next/headers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -18,15 +18,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} `}>
-        <ClerkProvider>
-          <Provider>
+    <ClerkProvider>
+      <TRPCReactProvider headers={headers()}>
+        <html lang="en">
+          <body className={`${inter.className} `}>
             <Nav />
             {children}
-          </Provider>
-        </ClerkProvider>
-      </body>
-    </html>
+          </body>
+        </html>
+      </TRPCReactProvider>
+    </ClerkProvider>
   );
 }

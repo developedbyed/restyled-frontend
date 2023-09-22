@@ -2,8 +2,9 @@ import ProductGallery from "@/components/ProductGallery";
 
 export default async function Home() {
   return (
-    <main className="py-12">
-      <ProductGallery />
+    <main className="p-12">
+      {/* <ProductGallery /> */}
+      <h1>Woooo</h1>
     </main>
   );
 }
