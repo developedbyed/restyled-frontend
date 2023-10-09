@@ -6,8 +6,6 @@ import { formSchema } from "./dashboard/AddProduct/AddPage";
 import { z } from "zod";
 
 export async function createProductAction(values: z.infer<typeof formSchema>) {
-  const { userId } = auth();
-
   await db.transaction(async (tx) => {
     const data = await tx
       .insert(products)

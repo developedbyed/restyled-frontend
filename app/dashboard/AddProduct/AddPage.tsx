@@ -22,15 +22,17 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { createProductAction } from "@/app/actions";
-import { useState } from "react";
 import { CldUploadButton } from "next-cloudinary";
+import Image from "next/image";
+import { GradientPicker } from "./Picker";
+
 //Form schema
 export const formSchema = z.object({
   title: z.string().min(5, {
     message: "Title must be at least 5 characters.",
   }),
   description: z.string().min(20, {
-    message: "Description must be at least 5 characters.",
+    message: "Description must be at least 20 characters.",
   }),
   subtitle: z.string().min(5, {
     message: "Description must be at least 5 characters.",
@@ -40,7 +42,7 @@ export const formSchema = z.object({
     .array(
       z.object({
         color: z.string().min(4).max(9).regex(/^#/),
-        image: z.string().min(5),
+        image: z.string().url(),
         variantName: z.string().min(5),
       })
     )
@@ -57,12 +59,19 @@ export default function AddProduct() {
       title: "",
       subtitle: "",
       price: 29.99,
-      variants: [{ color: "#ffffff", image: "urllll", variantName: "Title" }],
+      variants: [
+        {
+          color: "",
+          image: "https://placehold.co/300x300",
+          variantName: "",
+        },
+      ],
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control: form.control,
+    rules: { minLength: 1, required: true },
     name: "variants",
   });
 
@@ -70,9 +79,10 @@ export default function AddProduct() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values.variants);
+
     createProductAction(values);
   }
+
   return (
     <div className="max-w-2xl m-auto">
       <Form {...form}>
@@ -145,7 +155,7 @@ export default function AddProduct() {
                     name={`variants.${index}.variantName`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{item.variantName}</FormLabel>
+                        <FormLabel>Product Title</FormLabel>
                         <FormControl>
                           <Input placeholder={item.variantName} {...field} />
                         </FormControl>
@@ -158,20 +168,23 @@ export default function AddProduct() {
                     name={`variants.${index}.color`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{item.color}</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Hex Color" {...field} />
+                        <FormLabel>Product Color</FormLabel>
+                        <FormControl className="flex">
+                          <GradientPicker background={field.value}>
+                            <Input placeholder="image" {...field} />
+                          </GradientPicker>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+
                   <FormField
                     control={form.control}
                     name={`variants.${index}.image`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{item.image}</FormLabel>
+                        <FormLabel>Image</FormLabel>
                         <FormControl>
                           <Input placeholder="Image" {...field} />
                         </FormControl>
@@ -180,8 +193,26 @@ export default function AddProduct() {
                     )}
                   />
                   <CldUploadButton
-                    onSuccess={({ info }) => {}}
+                    onSuccess={(data) => {
+                      if (data.event === "success") {
+                        console.log(data.info);
+                        form.setValue(
+                          `variants.${index}.image`,
+                          data.info?.secure_url
+                        );
+                      }
+                    }}
+                    onBatchCancelled={() => {
+                      console.log("cancelled");
+                    }}
                     uploadPreset="restyled"
+                  />
+
+                  <Image
+                    alt="preview"
+                    width={300}
+                    height={300}
+                    src={fields[index].image}
                   />
                 </CardContent>
                 <CardFooter className="flex justify-between">
