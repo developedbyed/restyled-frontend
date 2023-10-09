@@ -1,0 +1,1 @@
+ALTER TABLE "productVariant" ALTER COLUMN "productID" SET NOT NULL;

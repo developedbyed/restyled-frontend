@@ -1,14 +1,10 @@
-"use client";
-import { trpc } from "../Provider";
+import isAdmin from "@/lib/isAdmin";
+import AddProduct from "./AddProduct/AddPage";
 
-export default function Dashboard() {
-  const { data, error, isLoading } = trpc.woo.useQuery();
-  if (error) return <h1>{error.message}</h1>;
-  if (isLoading) console.log(isLoading);
-  console.log(data);
+export default async function Dashboard() {
   return (
     <div>
-      <h1>Hellooo</h1>
+      <AddProduct />
     </div>
   );
 }

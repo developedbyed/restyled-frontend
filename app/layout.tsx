@@ -1,11 +1,8 @@
 import Nav from "@/components/Navigation/Nav";
 import "@/app/globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
-import { TRPCReactProvider } from "./Provider";
-import { headers } from "next/headers";
-const inter = Inter({ subsets: ["latin"] });
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "Restyled",
@@ -19,14 +16,14 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <TRPCReactProvider headers={headers()}>
-        <html lang="en">
-          <body className={`${inter.className} `}>
+      <html lang="en" suppressHydrationWarning>
+        <body>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Nav />
             {children}
-          </body>
-        </html>
-      </TRPCReactProvider>
+          </ThemeProvider>
+        </body>
+      </html>
     </ClerkProvider>
   );
 }

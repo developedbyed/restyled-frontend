@@ -1,11 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { type Media } from "@/types/strapi/Media";
 import useEmblaCarousel from "embla-carousel-react";
 import { useEffect, useState, useCallback } from "react";
 
-export default function Carousel({ images }: { images: Media[] }) {
+export default function Carousel({ images }) {
   console.log(images.length);
   const [emblaRef, emblaMainApi] = useEmblaCarousel({
     loop: true,

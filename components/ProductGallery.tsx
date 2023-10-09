@@ -1,10 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { serverTRPC } from "@/server/trpc_server";
 
 export default async function ProductGallery() {
-  const { data } = await serverTRPC.getProducts.query();
-
   return (
     <div className="flex flex-wrap justify-center gap-12">
       {data.map((product) => (

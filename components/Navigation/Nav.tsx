@@ -2,23 +2,32 @@
 import Link from "next/link";
 import User from "./User";
 import { FaShoppingCart } from "react-icons/fa";
+import { ModeToggle } from "./ModeToggle";
+import { Button } from "../ui/button";
 
 export default function Nav() {
   return (
-    <header className="bg-black text-white p-6">
+    <header className="bg-background text-foreground p-6">
       <nav>
-        <ul className="flex justify-between">
+        <ul className="flex justify-between items-center">
           <li>
             <Link className="font-bold" href={"/"}>
               Restyled.
             </Link>
           </li>
-          <li>
-            <div className="flex gap-8 text-xl items-center ">
+          <div className="flex items-center gap-8">
+            <li>
+              <ModeToggle />
+            </li>
+            <li>
+              <Button size={"icon"} variant="outline">
+                <FaShoppingCart className="text-foreground text-lg" />
+              </Button>
+            </li>
+            <li>
               <User />
-              <FaShoppingCart className=" text-white" />
-            </div>
-          </li>
+            </li>
+          </div>
         </ul>
       </nav>
     </header>
