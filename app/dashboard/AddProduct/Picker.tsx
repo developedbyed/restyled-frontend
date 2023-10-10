@@ -1,26 +1,28 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import { Paintbrush } from "lucide-react";
-import Link from "next/link";
-import { useMemo, useState } from "react";
+} from "@/components/ui/popover"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { cn } from "@/lib/utils"
+import { Paintbrush } from "lucide-react"
+import Link from "next/link"
+import { FC, useMemo, useState } from "react"
 
 export function GradientPicker({
   background,
   className,
   children,
+  setColor,
 }: {
-  background: string;
-  className?: string;
-  children: React.ReactNode;
+  background: string
+  className?: string
+  children: React.ReactNode
+  setColor: (color: string, index: number) => void
 }) {
   const solids = [
     "#E2E2E2",
@@ -31,7 +33,7 @@ export function GradientPicker({
     "#70e2ff",
     "#cd93ff",
     "#09203f",
-  ];
+  ]
 
   return (
     <Popover>
@@ -70,14 +72,14 @@ export function GradientPicker({
               <div
                 key={s}
                 style={{ background: s }}
-                className="rounded-md h-6 w-6 cursor-pointer active:scale-105"
+                onClick={(e) => setColor(s, 0)}
+                className="rounded-md h-6 w-6 cursor-pointer active:scale-105 my-2"
               />
             ))}
+            {children}
           </TabsContent>
         </Tabs>
-
-        {children}
       </PopoverContent>
     </Popover>
-  );
+  )
 }

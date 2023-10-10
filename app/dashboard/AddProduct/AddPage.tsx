@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -8,7 +8,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui/form"
 import {
   Card,
   CardContent,
@@ -16,15 +16,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { createProductAction } from "@/app/actions";
-import { CldUploadButton } from "next-cloudinary";
-import Image from "next/image";
-import { GradientPicker } from "./Picker";
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { useForm, useFieldArray } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { createProductAction } from "@/app/actions"
+import { CldUploadButton } from "next-cloudinary"
+import Image from "next/image"
+import { GradientPicker } from "./Picker"
+import { Upload } from "lucide-react"
 
 //Form schema
 export const formSchema = z.object({
@@ -47,13 +48,13 @@ export const formSchema = z.object({
       })
     )
     .nonempty({ message: "One product is required." }),
-});
+})
 
 export default function AddProduct() {
   //Form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    mode: "onChange",
+    mode: "onBlur",
     defaultValues: {
       description: "",
       title: "",
@@ -62,31 +63,37 @@ export default function AddProduct() {
       variants: [
         {
           color: "",
-          image: "https://placehold.co/300x300",
+          image: "https://placehold.co/300x300/png",
           variantName: "",
         },
       ],
     },
-  });
+  })
 
   const { fields, append, remove, update } = useFieldArray({
     control: form.control,
     rules: { minLength: 1, required: true },
     name: "variants",
-  });
+  })
+
+  const setColor = (color: string, index: number) => {
+    form.setValue(`variants.${index}.color`, color)
+  }
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-
-    createProductAction(values);
+    createProductAction(values)
   }
 
   return (
     <div className="max-w-2xl m-auto">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-6"
+        >
           <FormField
             control={form.control}
             name="title"
@@ -140,7 +147,7 @@ export default function AddProduct() {
             )}
           />
 
-          <div className="flex flex-wrap gap-6">
+          <div className="flex flex-wrap ">
             {fields.map((item, index) => (
               <Card key={item.id} className="flex-grow basis-64 shrink-0">
                 <CardHeader>
@@ -149,7 +156,7 @@ export default function AddProduct() {
                     Create at least one type of product.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex flex-col gap-6">
                   <FormField
                     control={form.control}
                     name={`variants.${index}.variantName`}
@@ -170,8 +177,11 @@ export default function AddProduct() {
                       <FormItem>
                         <FormLabel>Product Color</FormLabel>
                         <FormControl className="flex">
-                          <GradientPicker background={field.value}>
-                            <Input placeholder="image" {...field} />
+                          <GradientPicker
+                            setColor={setColor}
+                            background={field.value}
+                          >
+                            <Input placeholder="#hex" {...field} />
                           </GradientPicker>
                         </FormControl>
                         <FormMessage />
@@ -184,7 +194,7 @@ export default function AddProduct() {
                     name={`variants.${index}.image`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Image</FormLabel>
+                        <FormLabel>Upload Image</FormLabel>
                         <FormControl>
                           <Input placeholder="Image" {...field} />
                         </FormControl>
@@ -192,28 +202,34 @@ export default function AddProduct() {
                       </FormItem>
                     )}
                   />
-                  <CldUploadButton
-                    onSuccess={(data) => {
-                      if (data.event === "success") {
-                        console.log(data.info);
-                        form.setValue(
-                          `variants.${index}.image`,
-                          data.info?.secure_url
-                        );
-                      }
-                    }}
-                    onBatchCancelled={() => {
-                      console.log("cancelled");
-                    }}
-                    uploadPreset="restyled"
-                  />
+                  <div className="flex gap-6">
+                    <CldUploadButton
+                      className="w-24 h-24 bg-muted flex items-center justify-center"
+                      onUpload={({ info, event }) => {
+                        if (event === "success") {
+                          update(index, {
+                            color: fields[index].color,
+                            variantName: fields[index].variantName,
+                            image: info?.url as string,
+                          })
+                        }
+                      }}
+                      onBatchCancelled={() => {
+                        console.log("cancelled")
+                      }}
+                      uploadPreset="restyled"
+                    >
+                      <Upload />
+                    </CldUploadButton>
 
-                  <Image
-                    alt="preview"
-                    width={300}
-                    height={300}
-                    src={fields[index].image}
-                  />
+                    <Image
+                      alt="preview"
+                      width={150}
+                      height={150}
+                      src={fields[index].image}
+                      className="rounded-md"
+                    />
+                  </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
                   <Button
@@ -229,7 +245,11 @@ export default function AddProduct() {
           </div>
           <Button
             onClick={() =>
-              append({ color: "#", image: "", variantName: "New Item" })
+              append({
+                color: "#",
+                image: "https://placehold.co/300x300/png",
+                variantName: "New Product",
+              })
             }
             type="button"
           >
@@ -241,5 +261,5 @@ export default function AddProduct() {
         </form>
       </Form>
     </div>
-  );
+  )
 }
