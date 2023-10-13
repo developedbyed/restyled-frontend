@@ -1,14 +1,14 @@
 "use client";
 
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { FaUserAlt } from "react-icons/fa";
+import { UserCircle } from "lucide-react";
 
 export default function User() {
   return (
     <div>
       <SignedOut>
         <SignInButton mode="modal">
-          <FaUserAlt />
+          <UserCircle />
         </SignInButton>
       </SignedOut>
       <SignedIn>

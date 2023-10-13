@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
 import User from "./User";
-import { FaShoppingCart } from "react-icons/fa";
+import { ShoppingBag } from "lucide-react";
 import { ModeToggle } from "./ModeToggle";
 import { Button } from "../ui/button";
 
 export default function Nav() {
   return (
-    <header className="bg-background text-foreground p-6">
+    <header className="max-w-6xl m-auto bg-background text-foreground p-6">
       <nav>
         <ul className="flex justify-between items-center">
           <li>
@@ -21,7 +21,7 @@ export default function Nav() {
             </li>
             <li>
               <Button size={"icon"} variant="outline">
-                <FaShoppingCart className="text-foreground text-lg" />
+                <ShoppingBag className="text-foreground text-lg" />
               </Button>
             </li>
             <li>
