@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -8,7 +8,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui/form"
 import {
   Card,
   CardContent,
@@ -16,22 +16,22 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { formSchema } from "@/app/zodTypes";
-import * as z from "zod";
-import { createProductAction } from "@/app/actions";
-import { CldUploadButton } from "next-cloudinary";
-import Image from "next/image";
-import { GradientPicker } from "./Picker";
-import { Upload } from "lucide-react";
-import Tiptap from "./TipTap";
-import { useState } from "react";
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { useForm, useFieldArray } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { formSchema } from "@/app/zodTypes"
+import * as z from "zod"
+import { createProductAction } from "@/app/actions"
+import { CldUploadButton } from "next-cloudinary"
+import Image from "next/image"
+import { GradientPicker } from "./Picker"
+import { Upload } from "lucide-react"
+import Tiptap from "./TipTap"
+import { useState } from "react"
 
 export default function AddProduct() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false)
   //Form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,25 +49,25 @@ export default function AddProduct() {
         },
       ],
     },
-  });
+  })
 
   const { fields, append, remove, update } = useFieldArray({
     control: form.control,
     rules: { minLength: 1, required: true },
     name: "variants",
-  });
+  })
 
   const setColor = (color: string, index: number) => {
-    form.setValue(`variants.${index}.color`, color);
-    console.log(index);
-  };
+    form.setValue(`variants.${index}.color`, color)
+    console.log(index)
+  }
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    setIsSubmitting(true);
-    createProductAction(values);
+    setIsSubmitting(true)
+    createProductAction(values)
   }
 
   return (
@@ -109,26 +109,25 @@ export default function AddProduct() {
           />
           <FormField
             control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Tiptap description={field.value} onChange={field.onChange} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="price"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Price</FormLabel>
                 <FormControl>
                   <Input placeholder="Example: 29.99" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Tiptap description={field.value} onChange={field.onChange} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -190,17 +189,20 @@ export default function AddProduct() {
                             <CldUploadButton
                               className="w-8 h-8 bg-primary p-2 rounded-full flex items-center justify-center "
                               onUpload={({ info, event }) => {
-                                if (event === "success") {
+                                if (
+                                  event === "success" &&
+                                  typeof info === "object" &&
+                                  "url" in info
+                                ) {
                                   update(index, {
                                     color: fields[index].color,
                                     variantName: fields[index].variantName,
-                                    // @ts-ignore
-                                    image: info?.url,
-                                  });
+                                    image: info.url as string,
+                                  })
                                 }
                               }}
                               onBatchCancelled={() => {
-                                console.log("cancelled");
+                                console.log("cancelled")
                               }}
                               uploadPreset="restyled"
                             >
@@ -255,5 +257,5 @@ export default function AddProduct() {
         </form>
       </Form>
     </div>
-  );
+  )
 }
