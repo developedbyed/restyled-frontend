@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import { useEditor, EditorContent } from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
-import Paragraph from "@tiptap/extension-paragraph"
-import Heading from "@tiptap/extension-heading"
-import { Toolbar } from "./Toolbar"
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Paragraph from "@tiptap/extension-paragraph";
+import Heading from "@tiptap/extension-heading";
+import { Toolbar } from "./Toolbar";
 
 export default function Tiptap({
   description,
   onChange,
 }: {
-  description: string
-  onChange: any
+  description: string;
+  onChange: any;
 }) {
   const editor = useEditor({
     extensions: [
@@ -45,15 +45,15 @@ export default function Tiptap({
       },
     },
     onUpdate({ editor }) {
-      onChange(editor.getHTML())
-      console.log(editor.getHTML())
+      // const clean = sanitize(editor.getHTML());
+      onChange(editor.getHTML());
     },
-  })
+  });
 
   return (
     <div className="flex flex-col justify-stretch min-h-[250px]">
       <Toolbar editor={editor} />
       <EditorContent editor={editor} />
     </div>
-  )
+  );
 }

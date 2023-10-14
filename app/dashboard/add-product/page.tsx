@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -8,7 +8,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import {
   Card,
   CardContent,
@@ -16,22 +16,28 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { useForm, useFieldArray } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { formSchema } from "@/app/zodTypes"
-import * as z from "zod"
-import { createProductAction } from "@/app/actions"
-import { CldUploadButton } from "next-cloudinary"
-import Image from "next/image"
-import { GradientPicker } from "./Picker"
-import { Upload } from "lucide-react"
-import Tiptap from "./TipTap"
-import { useState } from "react"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { formSchema } from "@/app/zodTypes";
+import * as z from "zod";
+import { createProductAction } from "@/app/actions";
+import { CldUploadButton } from "next-cloudinary";
+import Image from "next/image";
+import { GradientPicker } from "./Picker";
+import { Upload } from "lucide-react";
+import Tiptap from "./TipTap";
+import { useState } from "react";
+
+const constantInputs = [
+  { name: "title", alt: "Pick a short and catchy title!" },
+  { name: "price", alt: "Pick a short and catchy title!" },
+  { name: "subtitle", alt: "Pick a short and catchy title!" },
+] as const;
 
 export default function AddProduct() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
   //Form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,25 +55,25 @@ export default function AddProduct() {
         },
       ],
     },
-  })
+  });
 
   const { fields, append, remove, update } = useFieldArray({
     control: form.control,
     rules: { minLength: 1, required: true },
     name: "variants",
-  })
+  });
 
   const setColor = (color: string, index: number) => {
-    form.setValue(`variants.${index}.color`, color)
-    console.log(index)
-  }
+    form.setValue(`variants.${index}.color`, color);
+  };
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    setIsSubmitting(true)
-    createProductAction(values)
+
+    setIsSubmitting(true);
+    createProductAction(values);
   }
 
   return (
@@ -77,49 +83,22 @@ export default function AddProduct() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-6"
         >
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Main title for your product" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {constantInputs.map((input) => (
+            <FormField
+              control={form.control}
+              name={input.name}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{input.name}</FormLabel>
+                  <FormControl>
+                    <Input alt={input.alt} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
 
-          <FormField
-            control={form.control}
-            name="subtitle"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Subtitle</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="A short description about your product"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Price</FormLabel>
-                <FormControl>
-                  <Input placeholder="Example: 29.99" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="description"
@@ -127,7 +106,7 @@ export default function AddProduct() {
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Tiptap description={field.value} onChange={field.onChange} />
+                  <Tiptap description={field.value} onChange={form.setValue} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -198,11 +177,11 @@ export default function AddProduct() {
                                     color: fields[index].color,
                                     variantName: fields[index].variantName,
                                     image: info.url as string,
-                                  })
+                                  });
                                 }
                               }}
                               onBatchCancelled={() => {
-                                console.log("cancelled")
+                                console.log("cancelled");
                               }}
                               uploadPreset="restyled"
                             >
@@ -257,5 +236,5 @@ export default function AddProduct() {
         </form>
       </Form>
     </div>
-  )
+  );
 }
