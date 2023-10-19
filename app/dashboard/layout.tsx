@@ -1,15 +1,15 @@
-"use client";
+"use client"
 
-import "@/app/globals.css";
-import type { Metadata } from "next";
-import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
-import { usePathname } from "next/navigation";
+import "@/app/globals.css"
+import type { Metadata } from "next"
+import Link from "next/link"
+import { Separator } from "@/components/ui/separator"
+import { usePathname } from "next/navigation"
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   const links = [
     {
@@ -24,8 +24,8 @@ export default function DashboardLayout({
       label: "Orders",
       path: "/dashboard/orders",
     },
-  ] as const;
-  const pathname = usePathname();
+  ] as const
+  const pathname = usePathname()
 
   return (
     <>
@@ -34,7 +34,7 @@ export default function DashboardLayout({
         <Separator className="my-4" />
         <ul className="flex items-center gap-12 font-lg font-bold text-sm text-muted-foreground">
           {links.map((link) => {
-            const isActive = pathname.startsWith(link.path);
+            const isActive = pathname.startsWith(link.path)
             return (
               <li key={link.path}>
                 <Link
@@ -46,11 +46,11 @@ export default function DashboardLayout({
                   {link.label}
                 </Link>
               </li>
-            );
+            )
           })}
         </ul>
       </nav>
-      <section className="max-w-2xl m-auto py-6">{children}</section>
+      <section className="max-w-5xl m-auto py-6">{children}</section>
     </>
-  );
+  )
 }

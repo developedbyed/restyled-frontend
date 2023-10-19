@@ -1,13 +1,12 @@
-"use server";
-import { db } from "@/server/db";
-import { productVariant, products } from "@/server/db/schema";
-import { formSchema } from "./zodTypes";
-import { z } from "zod";
-import { redirect } from "next/navigation";
-import { NextResponse } from "next/server";
+"use server"
+import { db } from "@/server/db"
+import { productVariant, products } from "@/server/db/schema"
+import { formSchema } from "./zodTypes"
+import { z } from "zod"
 
 export async function createProductAction(values: z.infer<typeof formSchema>) {
-  const parsedForm = formSchema.safeParse(values);
+  const parsedForm = formSchema.safeParse(values)
+
   if (parsedForm.success) {
     try {
       await db.transaction(async (tx) => {
@@ -19,7 +18,7 @@ export async function createProductAction(values: z.infer<typeof formSchema>) {
             price: parsedForm.data.price,
             subtitle: parsedForm.data.subtitle,
           })
-          .returning({ productID: products.id });
+          .returning({ productID: products.id })
 
         parsedForm.data.variants.map(async (variant) => {
           await tx.insert(productVariant).values({
@@ -27,13 +26,26 @@ export async function createProductAction(values: z.infer<typeof formSchema>) {
             image: variant.image,
             variantName: variant.variantName,
             productID: data[0].productID,
-          });
-        });
-        return { success: "We did it", data: parsedForm.data };
-      });
+          })
+        })
+      })
     } catch (error) {
-      return { error: "Oh noesss" };
+      return { error: "Oh noesss" }
     }
+  } else {
+    return { error: "Something went wrong" }
   }
-  return { error: "Something went wrong" };
+}
+
+export async function getProducts() {
+  try {
+    const data = await db.query.products.findMany({
+      with: {
+        productVariants: true,
+      },
+    })
+    return { data }
+  } catch (error) {
+    return { error: `Can't load products...` }
+  }
 }

@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -8,7 +8,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui/form"
 import {
   Card,
   CardContent,
@@ -16,80 +16,89 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { formSchema } from "@/app/zodTypes";
-import * as z from "zod";
-import { createProductAction } from "@/app/actions";
-import { CldUploadButton } from "next-cloudinary";
-import Image from "next/image";
-import { GradientPicker } from "./Picker";
-import { Upload } from "lucide-react";
-import Tiptap from "./TipTap";
-import { useState } from "react";
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { useForm, useFieldArray } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { formSchema } from "@/app/zodTypes"
+import * as z from "zod"
+import { createProductAction } from "@/app/actions"
+import { CldUploadButton } from "next-cloudinary"
+import Image from "next/image"
+import { GradientPicker } from "./Picker"
+import { Upload } from "lucide-react"
+import Tiptap from "./TipTap"
+import { useState } from "react"
+import { Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 const constantInputs = [
-  { name: "title", alt: "Pick a short and catchy title!" },
-  { name: "price", alt: "Pick a short and catchy title!" },
-  { name: "subtitle", alt: "Pick a short and catchy title!" },
-] as const;
+  { name: "Title", label: "title", alt: "Pick a short and catchy title!" },
+  { name: "Price", label: "price", alt: "Your product Price" },
+  { name: "Subtitle", label: "subtitle", alt: "A short subtitle" },
+  {
+    name: "description",
+    label: "Description",
+    alt: "Add all the details about your product ✨",
+  },
+] as const
 
 export default function AddProduct() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const router = useRouter()
   //Form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
-      description: "",
-      title: "",
-      subtitle: "",
-      price: 29.99,
+      title: undefined,
+      price: undefined,
+      subtitle: undefined,
+      description: "<p></p>",
       variants: [
         {
           color: "",
-          image: "https://placehold.co/300x300/png",
+          image: "",
           variantName: "",
         },
       ],
     },
-  });
+  })
+
+  //Helpers
 
   function setRichText(value: string) {
-    form.setValue("description", value, { shouldValidate: true });
+    form.setValue("description", value, { shouldValidate: true })
   }
 
+  const setColor = (color: string, index: number) => {
+    form.setValue(`variants.${index}.color`, color)
+  }
+
+  //Array for Variants
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     rules: { minLength: 1, required: true },
     name: "variants",
-  });
+  })
 
-  const setColor = (color: string, index: number) => {
-    form.setValue(`variants.${index}.color`, color);
-  };
-
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    setIsSubmitting(true)
+    const result = await createProductAction(values)
 
-    setIsSubmitting(true);
-    const result = await createProductAction(values);
-    if (!result) {
-      console.log("Client: something went wrong");
-      return;
+    //Handle Error
+    if (result?.error) {
+      console.log(result.error)
+    } else {
+      setIsSubmitting(false)
+      form.reset()
+      console.log("Product Added Sucessfully")
+      router.push("/dashboard/products")
     }
-    if (result.error) {
-      console.log(result.error);
-      return;
-    }
-    form.reset();
-    console.log("submitted!");
   }
-
+  console.log(form.getValues())
   return (
     <div>
       <Form {...form}>
@@ -97,40 +106,48 @@ export default function AddProduct() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-6"
         >
-          {constantInputs.map((input) => (
-            <FormField
-              key={input.name}
-              control={form.control}
-              name={input.name}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{input.name}</FormLabel>
-                  <FormControl>
-                    <Input alt={input.alt} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ))}
-
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Tiptap description={field.value} setRichText={setRichText} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {constantInputs.map((input) => {
+            if (input.name === "description")
+              return (
+                <FormField
+                  key={input.name}
+                  control={form.control}
+                  name={input.name}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Tiptap
+                          description={field.value}
+                          setRichText={setRichText}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )
+            return (
+              <FormField
+                key={input.name}
+                control={form.control}
+                name={input.label}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{input.name}</FormLabel>
+                    <FormControl>
+                      <Input placeholder={input.alt} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )
+          })}
 
           <div className="flex flex-wrap gap-6">
             {fields.map((item, index) => (
-              <Card key={item.id} className="flex-grow basis-64 shrink-0">
+              <Card key={item.id} className="flex-grow basis-72 shrink-0">
                 <CardHeader>
                   <CardTitle>Add Variant</CardTitle>
                   <CardDescription>
@@ -145,7 +162,10 @@ export default function AddProduct() {
                       <FormItem>
                         <FormLabel>Product Title</FormLabel>
                         <FormControl>
-                          <Input placeholder={item.variantName} {...field} />
+                          <Input
+                            placeholder="Select a variant title"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -163,7 +183,10 @@ export default function AddProduct() {
                             background={field.value}
                             pickerNumber={index}
                           >
-                            <Input placeholder="#hex" {...field} />
+                            <Input
+                              placeholder="Pick a hex color #fff"
+                              {...field}
+                            />
                           </GradientPicker>
                         </FormControl>
                         <FormMessage />
@@ -179,7 +202,10 @@ export default function AddProduct() {
                         <FormLabel>Upload Image</FormLabel>
                         <FormControl>
                           <div className="flex items-center gap-6">
-                            <Input placeholder="Image" {...field} />
+                            <Input
+                              placeholder="Paste a link or upload an image"
+                              {...field}
+                            />
                             <CldUploadButton
                               className="w-8 h-8 bg-primary p-2 rounded-full flex items-center justify-center "
                               onUpload={({ info, event }) => {
@@ -191,11 +217,8 @@ export default function AddProduct() {
                                   form.setValue(
                                     `variants.${index}.image`,
                                     info.url as string
-                                  );
+                                  )
                                 }
-                              }}
-                              onBatchCancelled={() => {
-                                console.log("cancelled");
                               }}
                               uploadPreset="restyled"
                             >
@@ -207,22 +230,14 @@ export default function AddProduct() {
                       </FormItem>
                     )}
                   />
-
-                  <Image
-                    alt="preview"
-                    width={100}
-                    height={100}
-                    src={fields[index].image}
-                    className="rounded-md"
-                  />
                 </CardContent>
-                <CardFooter className="flex justify-between">
+                <CardFooter className="flex ">
                   <Button
                     type="button"
                     onClick={() => remove(index)}
                     variant="outline"
                   >
-                    Remove
+                    <Trash2 size={16} />
                   </Button>
                 </CardFooter>
               </Card>
@@ -233,7 +248,7 @@ export default function AddProduct() {
               append({
                 color: "",
                 image: "",
-                variantName: "New Product",
+                variantName: "",
               })
             }
             type="button"
@@ -247,5 +262,5 @@ export default function AddProduct() {
         </form>
       </Form>
     </div>
-  );
+  )
 }
