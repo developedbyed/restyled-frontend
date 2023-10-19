@@ -57,7 +57,11 @@ export default function AddProduct() {
     },
   });
 
-  const { fields, append, remove, update } = useFieldArray({
+  function setRichText(value: string) {
+    form.setValue("description", value, { shouldValidate: true });
+  }
+
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     rules: { minLength: 1, required: true },
     name: "variants",
@@ -68,12 +72,22 @@ export default function AddProduct() {
   };
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
 
     setIsSubmitting(true);
-    createProductAction(values);
+    const result = await createProductAction(values);
+    if (!result) {
+      console.log("Client: something went wrong");
+      return;
+    }
+    if (result.error) {
+      console.log(result.error);
+      return;
+    }
+    form.reset();
+    console.log("submitted!");
   }
 
   return (
@@ -85,6 +99,7 @@ export default function AddProduct() {
         >
           {constantInputs.map((input) => (
             <FormField
+              key={input.name}
               control={form.control}
               name={input.name}
               render={({ field }) => (
@@ -106,7 +121,7 @@ export default function AddProduct() {
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Tiptap description={field.value} onChange={form.setValue} />
+                  <Tiptap description={field.value} setRichText={setRichText} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -173,11 +188,10 @@ export default function AddProduct() {
                                   typeof info === "object" &&
                                   "url" in info
                                 ) {
-                                  update(index, {
-                                    color: fields[index].color,
-                                    variantName: fields[index].variantName,
-                                    image: info.url as string,
-                                  });
+                                  form.setValue(
+                                    `variants.${index}.image`,
+                                    info.url as string
+                                  );
                                 }
                               }}
                               onBatchCancelled={() => {
@@ -217,8 +231,8 @@ export default function AddProduct() {
           <Button
             onClick={() =>
               append({
-                color: "#",
-                image: "https://placehold.co/300x300/png",
+                color: "",
+                image: "",
                 variantName: "New Product",
               })
             }
@@ -227,10 +241,7 @@ export default function AddProduct() {
           >
             Add
           </Button>
-          <Button
-            disabled={!form.formState.isValid || isSubmitting}
-            type="submit"
-          >
+          <Button disabled={isSubmitting} type="submit">
             Submit
           </Button>
         </form>

@@ -8,10 +8,10 @@ import { Toolbar } from "./Toolbar";
 
 export default function Tiptap({
   description,
-  onChange,
+  setRichText,
 }: {
   description: string;
-  onChange: any;
+  setRichText: (richText: string) => void;
 }) {
   const editor = useEditor({
     extensions: [
@@ -46,7 +46,7 @@ export default function Tiptap({
     },
     onUpdate({ editor }) {
       // const clean = sanitize(editor.getHTML());
-      onChange(editor.getHTML());
+      setRichText(editor.getHTML());
     },
   });
 

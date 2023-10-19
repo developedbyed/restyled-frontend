@@ -4,6 +4,7 @@ import { productVariant, products } from "@/server/db/schema";
 import { formSchema } from "./zodTypes";
 import { z } from "zod";
 import { redirect } from "next/navigation";
+import { NextResponse } from "next/server";
 
 export async function createProductAction(values: z.infer<typeof formSchema>) {
   const parsedForm = formSchema.safeParse(values);
@@ -28,11 +29,11 @@ export async function createProductAction(values: z.infer<typeof formSchema>) {
             productID: data[0].productID,
           });
         });
-        redirect("/dashboard");
+        return { success: "We did it", data: parsedForm.data };
       });
-    } catch (e) {
-      console.log(e);
-      return { error: e };
+    } catch (error) {
+      return { error: "Oh noesss" };
     }
   }
+  return { error: "Something went wrong" };
 }
