@@ -66,6 +66,7 @@
     "slate-history": "^0.93.0",
     "slate-hyperscript": "^0.77.0",
     "slate-react": "^0.99.0",
+    "sonner": "^1.0.3",
     "stripe": "^13.6.0",
     "superjson": "^1.13.1",
     "svix": "^1.12.0",

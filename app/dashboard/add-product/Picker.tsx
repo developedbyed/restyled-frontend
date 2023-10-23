@@ -23,15 +23,37 @@ export function GradientPicker({
   pickerNumber: number;
   setColor: (color: string, index: number) => void;
 }) {
-  const solids = [
-    "#E2E2E2",
-    "#ff75c3",
-    "#ffa647",
-    "#ffe83f",
-    "#9fff5b",
-    "#70e2ff",
-    "#cd93ff",
-    "#09203f",
+  const mutedPalettes = [
+    "#FDE3A7",
+    "#F8D573",
+    "#E3B44B",
+    "#D1936B",
+    "#AE7D5E",
+    "#FFAA85",
+    "#FF9052",
+    "#FF784D",
+    "#FF616D",
+    "#FF4D7D",
+    "#00B5EE",
+    "#009FDA",
+    "#0073B9",
+    "#004E7C",
+    "#002951",
+    "#655D8A",
+    "#50466F",
+    "#3D385D",
+    "#2B2947",
+    "#181430",
+    "#76C9BD",
+    "#53BBB7",
+    "#369DA3",
+    "#247489",
+    "#0D5C6C",
+    "#C25700",
+    "#FF6E00",
+    "#FF8A00",
+    "#FFA800",
+    "#FFC702",
   ];
 
   return (
@@ -67,7 +89,7 @@ export function GradientPicker({
           </TabsList>
 
           <TabsContent value="solid" className="flex flex-wrap gap-1 mt-0">
-            {solids.map((s) => (
+            {mutedPalettes.map((s) => (
               <div
                 key={s}
                 style={{ background: s }}

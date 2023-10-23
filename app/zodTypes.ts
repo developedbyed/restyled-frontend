@@ -1,4 +1,4 @@
-import * as z from "zod"
+import * as z from "zod";
 //Form schema
 export const formSchema = z.object({
   title: z.string().min(5, {
@@ -14,6 +14,13 @@ export const formSchema = z.object({
     message: "Description must be at least 5 characters.",
   }),
   price: z.coerce.number().multipleOf(0.01),
+  images: z
+    .array(
+      z.object({
+        image: z.string().url(),
+      })
+    )
+    .nonempty({ message: "One image must be added." }),
   variants: z
     .array(
       z.object({
@@ -23,4 +30,4 @@ export const formSchema = z.object({
       })
     )
     .nonempty({ message: "One product is required." }),
-})
+});

@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -8,7 +8,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import {
   Card,
   CardContent,
@@ -16,21 +16,23 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { useForm, useFieldArray } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { formSchema } from "@/app/zodTypes"
-import * as z from "zod"
-import { createProductAction } from "@/app/actions"
-import { CldUploadButton } from "next-cloudinary"
-import Image from "next/image"
-import { GradientPicker } from "./Picker"
-import { Upload } from "lucide-react"
-import Tiptap from "./TipTap"
-import { useState } from "react"
-import { Trash2 } from "lucide-react"
-import { useRouter } from "next/navigation"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { formSchema } from "@/app/zodTypes";
+import * as z from "zod";
+import { createProductAction } from "@/app/actions";
+import { CldUploadButton } from "next-cloudinary";
+import Image from "next/image";
+import { GradientPicker } from "./Picker";
+import { Upload } from "lucide-react";
+import Tiptap from "./TipTap";
+import { useState, useTransition } from "react";
+import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import CloudinaryButton from "./CloudinaryButton";
 
 const constantInputs = [
   { name: "Title", label: "title", alt: "Pick a short and catchy title!" },
@@ -41,20 +43,25 @@ const constantInputs = [
     label: "Description",
     alt: "Add all the details about your product ✨",
   },
-] as const
+] as const;
 
 export default function AddProduct() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const router = useRouter()
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   //Form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
-      title: undefined,
-      price: undefined,
-      subtitle: undefined,
+      title: "",
+      price: 0,
+      subtitle: "",
       description: "<p></p>",
+      images: [
+        {
+          image: "",
+        },
+      ],
       variants: [
         {
           color: "",
@@ -63,42 +70,49 @@ export default function AddProduct() {
         },
       ],
     },
-  })
+  });
 
   //Helpers
 
   function setRichText(value: string) {
-    form.setValue("description", value, { shouldValidate: true })
+    form.setValue("description", value, { shouldValidate: true });
   }
 
   const setColor = (color: string, index: number) => {
-    form.setValue(`variants.${index}.color`, color)
-  }
+    form.setValue(`variants.${index}.color`, color);
+  };
 
+  const imageFields = useFieldArray({
+    control: form.control,
+    rules: { minLength: 1, required: true },
+    name: "images",
+  });
   //Array for Variants
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     rules: { minLength: 1, required: true },
     name: "variants",
-  })
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    setIsSubmitting(true)
-    const result = await createProductAction(values)
 
-    //Handle Error
-    if (result?.error) {
-      console.log(result.error)
-    } else {
-      setIsSubmitting(false)
-      form.reset()
-      console.log("Product Added Sucessfully")
-      router.push("/dashboard/products")
-    }
+    // ✅ This will be type-safe and validated.
+    startTransition(async () => {
+      const result = await createProductAction(values);
+
+      //Handle Error
+      if (result?.error) {
+        console.log(result.error);
+        toast.error(result.error);
+      } else {
+        toast.success("Product added successfully 😊");
+        form.reset();
+        router.push("/dashboard/products");
+      }
+    });
   }
-  console.log(form.getValues())
+  console.log(form.getValues());
   return (
     <div>
       <Form {...form}>
@@ -126,7 +140,7 @@ export default function AddProduct() {
                     </FormItem>
                   )}
                 />
-              )
+              );
             return (
               <FormField
                 key={input.name}
@@ -142,8 +156,54 @@ export default function AddProduct() {
                   </FormItem>
                 )}
               />
-            )
+            );
           })}
+          <Button
+            onClick={() => imageFields.append({ image: "" })}
+            type="button"
+            variant={"outline"}
+          >
+            Add Image
+          </Button>
+          {imageFields.fields.map((item, index) => (
+            <FormField
+              key={item.id}
+              control={form.control}
+              name={`images.${index}.image`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Upload Image</FormLabel>
+                  <FormControl>
+                    <div className="flex items-center gap-6">
+                      <Input
+                        placeholder="Paste a link or upload an image"
+                        {...field}
+                      />
+                      <CldUploadButton
+                        className="w-8 h-8 bg-primary p-2 rounded-full flex items-center justify-center "
+                        onUpload={({ info, event }) => {
+                          if (
+                            event === "success" &&
+                            typeof info === "object" &&
+                            "url" in info
+                          ) {
+                            form.setValue(
+                              `images.${index}.image`,
+                              info.url as string
+                            );
+                          }
+                        }}
+                        uploadPreset="restyled"
+                      >
+                        <Upload />
+                      </CldUploadButton>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
 
           <div className="flex flex-wrap gap-6">
             {fields.map((item, index) => (
@@ -217,7 +277,7 @@ export default function AddProduct() {
                                   form.setValue(
                                     `variants.${index}.image`,
                                     info.url as string
-                                  )
+                                  );
                                 }
                               }}
                               uploadPreset="restyled"
@@ -232,13 +292,15 @@ export default function AddProduct() {
                   />
                 </CardContent>
                 <CardFooter className="flex ">
-                  <Button
-                    type="button"
-                    onClick={() => remove(index)}
-                    variant="outline"
-                  >
-                    <Trash2 size={16} />
-                  </Button>
+                  {fields.length >= 2 && (
+                    <Button
+                      type="button"
+                      onClick={() => remove(index)}
+                      variant="outline"
+                    >
+                      <Trash2 size={16} />
+                    </Button>
+                  )}
                 </CardFooter>
               </Card>
             ))}
@@ -256,11 +318,11 @@ export default function AddProduct() {
           >
             Add
           </Button>
-          <Button disabled={isSubmitting} type="submit">
+          <Button disabled={isPending} type="submit">
             Submit
           </Button>
         </form>
       </Form>
     </div>
-  )
+  );
 }

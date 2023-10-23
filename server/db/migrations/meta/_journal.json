@@ -78,6 +78,20 @@
       "when": 1696466451009,
       "tag": "0010_odd_vivisector",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1697902420855,
+      "tag": "0011_aromatic_iron_monger",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1698010444592,
+      "tag": "0012_majestic_tyger_tiger",
+      "breakpoints": true
     }
   ]
 }

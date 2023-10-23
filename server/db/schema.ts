@@ -1,4 +1,4 @@
-import { InferSelectModel, relations } from "drizzle-orm"
+import { InferSelectModel, relations } from "drizzle-orm";
 import {
   pgTable,
   serial,
@@ -6,7 +6,7 @@ import {
   timestamp,
   real,
   integer,
-} from "drizzle-orm/pg-core"
+} from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -16,7 +16,7 @@ export const users = pgTable("users", {
   clerkId: text("clerkId").notNull().unique(),
   stripeCustomer: text("stripeCustomer").notNull().unique(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-})
+});
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
@@ -24,7 +24,15 @@ export const products = pgTable("products", {
   price: real("price").notNull(),
   title: text("title").notNull(),
   subtitle: text("subtitle").notNull(),
-})
+});
+
+export const productImages = pgTable("productImages", {
+  id: serial("id").primaryKey(),
+  image: text("image").notNull(),
+  productID: integer("productID")
+    .notNull()
+    .references(() => products.id, { onDelete: "cascade" }),
+});
 
 export const productVariant = pgTable("productVariant", {
   id: serial("id").primaryKey(),
@@ -33,20 +41,29 @@ export const productVariant = pgTable("productVariant", {
   variantName: text("variantName").notNull(),
   productID: integer("productID")
     .notNull()
-    .references(() => products.id),
-})
+    .references(() => products.id, { onDelete: "cascade" }),
+});
 
 export const productVariantRelations = relations(productVariant, ({ one }) => ({
   product: one(products, {
     fields: [productVariant.productID],
     references: [products.id],
   }),
-}))
+}));
+
+export const productImagesRelations = relations(productImages, ({ one }) => ({
+  product: one(products, {
+    fields: [productImages.productID],
+    references: [products.id],
+  }),
+}));
 
 export const productRelations = relations(products, ({ many }) => ({
   productVariants: many(productVariant),
-}))
+  productImages: many(productImages),
+}));
 
-export type Products = InferSelectModel<typeof products>
-export type ProductVariants = InferSelectModel<typeof productVariant>
-export type User = InferSelectModel<typeof users>
+export type Products = InferSelectModel<typeof products>;
+export type ProductVariants = InferSelectModel<typeof productVariant>;
+export type User = InferSelectModel<typeof users>;
+export type ProductImages = InferSelectModel<typeof productImages>;

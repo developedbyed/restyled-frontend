@@ -3,6 +3,7 @@ import "@/app/globals.css";
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import Toaster from "@/components/Toaster";
 
 export const metadata: Metadata = {
   title: "Restyled",
@@ -19,6 +20,7 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Toaster />
             <Nav />
             {children}
           </ThemeProvider>
