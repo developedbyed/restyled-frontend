@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 
 export default function AddToCart() {
-  return <Button>Add To Cart</Button>;
+  return <Button className="my-4">Add To Cart</Button>
 }

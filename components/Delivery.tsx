@@ -1,12 +1,12 @@
-import { TbTruckDelivery } from "react-icons/tb";
-import { GrReturn } from "react-icons/gr";
+// import { TbTruckDelivery } from "react-icons/tb";
+// import { GrReturn } from "react-icons/gr";
 
 export default function Delivery() {
   return (
     <div className="max-w-xl bg-orange-100 p-8">
       <div>
         <span className="flex items-center gap-2">
-          <TbTruckDelivery className="text-2xl" />
+          {/* <TbTruckDelivery className="text-2xl" /> */}
           <h3>Delivery</h3>
         </span>
         <p>
@@ -16,7 +16,7 @@ export default function Delivery() {
       </div>
       <div>
         <span className="flex items-center gap-2">
-          <GrReturn className="text-2xl" />
+          {/* <GrReturn className="text-2xl" /> */}
           <h3>Returns</h3>
         </span>
 
@@ -38,5 +38,5 @@ export default function Delivery() {
         </p>
       </div>
     </div>
-  );
+  )
 }

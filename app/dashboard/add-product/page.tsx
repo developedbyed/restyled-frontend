@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -8,7 +8,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui/form"
 import {
   Card,
   CardContent,
@@ -16,23 +16,22 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { formSchema } from "@/app/zodTypes";
-import * as z from "zod";
-import { createProductAction } from "@/app/actions";
-import { CldUploadButton } from "next-cloudinary";
-import Image from "next/image";
-import { GradientPicker } from "./Picker";
-import { Upload } from "lucide-react";
-import Tiptap from "./TipTap";
-import { useState, useTransition } from "react";
-import { Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import CloudinaryButton from "./CloudinaryButton";
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { useForm, useFieldArray } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { formSchema } from "@/app/zodTypes"
+import * as z from "zod"
+import { createProductAction, getProduct } from "@/app/actions"
+import { CldUploadButton } from "next-cloudinary"
+import { GradientPicker } from "./Picker"
+import { Upload } from "lucide-react"
+import Tiptap from "./TipTap"
+import { useEffect, useState, useTransition } from "react"
+import { Trash2 } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { toast } from "sonner"
+import { useQuery } from "@tanstack/react-query"
 
 const constantInputs = [
   { name: "Title", label: "title", alt: "Pick a short and catchy title!" },
@@ -43,11 +42,20 @@ const constantInputs = [
     label: "Description",
     alt: "Add all the details about your product ✨",
   },
-] as const;
+] as const
 
 export default function AddProduct() {
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
+  const [isPending, startTransition] = useTransition()
+  const router = useRouter()
+  const params = useSearchParams()
+  const paramId = parseInt(params.getAll("id")[0])
+
+  const { data, isFetching, isFetched } = useQuery({
+    queryKey: ["product"],
+    queryFn: async () => await getProduct(paramId),
+    refetchInterval: 5000,
+  })
+
   //Form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,49 +78,49 @@ export default function AddProduct() {
         },
       ],
     },
-  });
+  })
 
   //Helpers
 
   function setRichText(value: string) {
-    form.setValue("description", value, { shouldValidate: true });
+    form.setValue("description", value, { shouldValidate: true })
   }
 
   const setColor = (color: string, index: number) => {
-    form.setValue(`variants.${index}.color`, color);
-  };
+    form.setValue(`variants.${index}.color`, color)
+  }
 
   const imageFields = useFieldArray({
     control: form.control,
     rules: { minLength: 1, required: true },
     name: "images",
-  });
+  })
   //Array for Variants
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     rules: { minLength: 1, required: true },
     name: "variants",
-  });
+  })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
 
     // ✅ This will be type-safe and validated.
     startTransition(async () => {
-      const result = await createProductAction(values);
+      const result = await createProductAction(values)
 
       //Handle Error
       if (result?.error) {
-        console.log(result.error);
-        toast.error(result.error);
+        console.log(result.error)
+        toast.error(result.error)
       } else {
-        toast.success("Product added successfully 😊");
-        form.reset();
-        router.push("/dashboard/products");
+        toast.success("Product added successfully 😊")
+        form.reset()
+        router.push("/dashboard/products")
       }
-    });
+    })
   }
-  console.log(form.getValues());
+
   return (
     <div>
       <Form {...form}>
@@ -140,7 +148,7 @@ export default function AddProduct() {
                     </FormItem>
                   )}
                 />
-              );
+              )
             return (
               <FormField
                 key={input.name}
@@ -156,7 +164,7 @@ export default function AddProduct() {
                   </FormItem>
                 )}
               />
-            );
+            )
           })}
           <Button
             onClick={() => imageFields.append({ image: "" })}
@@ -187,10 +195,9 @@ export default function AddProduct() {
                             typeof info === "object" &&
                             "url" in info
                           ) {
-                            form.setValue(
-                              `images.${index}.image`,
-                              info.url as string
-                            );
+                            imageFields.update(index, {
+                              image: info.url as string,
+                            })
                           }
                         }}
                         uploadPreset="restyled"
@@ -277,7 +284,7 @@ export default function AddProduct() {
                                   form.setValue(
                                     `variants.${index}.image`,
                                     info.url as string
-                                  );
+                                  )
                                 }
                               }}
                               uploadPreset="restyled"
@@ -324,5 +331,5 @@ export default function AddProduct() {
         </form>
       </Form>
     </div>
-  );
+  )
 }

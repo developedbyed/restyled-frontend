@@ -1,14 +1,14 @@
-"use client";
-import Link from "next/link";
-import User from "./User";
-import { ShoppingBag } from "lucide-react";
-import { ModeToggle } from "./ModeToggle";
-import { Button } from "../ui/button";
+"use client"
+import Link from "next/link"
+import User from "./User"
+import { ShoppingBag } from "lucide-react"
+import { ModeToggle } from "./ModeToggle"
+import { Button } from "../ui/button"
 
 export default function Nav() {
   return (
-    <header className="max-w-6xl m-auto bg-background text-foreground p-6">
-      <nav>
+    <header className="bg-background text-foreground p-6">
+      <nav className="max-w-6xl py-6 m-auto">
         <ul className="flex justify-between items-center">
           <li>
             <Link className="font-bold" href={"/"}>
@@ -21,7 +21,10 @@ export default function Nav() {
             </li>
             <li>
               <Button size={"icon"} variant="outline">
-                <ShoppingBag className="text-foreground text-lg" />
+                <ShoppingBag
+                  strokeWidth={"1.5px"}
+                  className="text-foreground text-lg "
+                />
               </Button>
             </li>
             <li>
@@ -31,5 +34,5 @@ export default function Nav() {
         </ul>
       </nav>
     </header>
-  );
+  )
 }
