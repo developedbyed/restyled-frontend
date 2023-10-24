@@ -17,7 +17,7 @@ export default function Error({
 
   return (
     <div className="h-full flex items-center justify-center flex-col">
-      <h2 className="text-6xl">Something went wrong! </h2>
+      <h2 className="text-6xl">Something went wrong! {error.message} </h2>
       <Button
         className="my-12"
         onClick={
