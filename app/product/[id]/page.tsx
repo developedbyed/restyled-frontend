@@ -1,17 +1,17 @@
-import Carousel from "@/components/Carousel"
-import Delivery from "@/components/Delivery"
-import AddToCart from "../AddToCart"
-import { getProduct } from "@/app/actions"
-import formatPrice from "@/lib/formatPrice"
+import Carousel from "@/components/Carousel";
+import Delivery from "@/components/Delivery";
+import AddToCart from "../AddToCart";
+import { getProduct } from "@/server/actions";
+import formatPrice from "@/lib/formatPrice";
 
 export default async function Product({ params }: { params: { id: string } }) {
-  const id = parseInt(params.id)
-  const product = await getProduct(id)
+  const id = parseInt(params.id);
+  const product = await getProduct(id);
 
-  if (product.error) return <h2>Something went wrong!</h2>
+  if (product.error) return <h2>Something went wrong!</h2>;
 
   if (product.data) {
-    const formatted = formatPrice(product.data[0].price)
+    const formatted = formatPrice(product.data[0].price);
 
     return (
       <main className="  text-sm">
@@ -39,6 +39,6 @@ export default async function Product({ params }: { params: { id: string } }) {
           <Delivery />
         </section>
       </main>
-    )
+    );
   }
 }

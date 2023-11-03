@@ -1,4 +1,4 @@
-import { getProducts } from "@/app/actions";
+import { getProducts } from "@/server/actions";
 import { DataTable } from "./DataTable";
 import { columns } from "./columns";
 

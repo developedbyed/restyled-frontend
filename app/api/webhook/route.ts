@@ -2,7 +2,7 @@ import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { db } from "@/server/db";
-import { users } from "@/server/db/schema";
+import { users } from "@/server/schema";
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 

@@ -1,46 +1,46 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import useEmblaCarousel from "embla-carousel-react"
-import { useEffect, useState, useCallback } from "react"
-import { ProductImages } from "@/server/db/schema"
+import Image from "next/image";
+import useEmblaCarousel from "embla-carousel-react";
+import { useEffect, useState, useCallback } from "react";
+import { ProductImages } from "@/server/schema";
 
 export default function Carousel({ images }: { images: ProductImages[] }) {
   const [emblaRef, emblaMainApi] = useEmblaCarousel({
     loop: true,
-  })
+  });
   const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel({
     dragFree: true,
     align: "start",
-  })
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  });
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const onThumbClick = useCallback(
     (index: number) => {
-      if (!emblaMainApi || !emblaThumbsApi) return
-      emblaMainApi.scrollTo(index)
+      if (!emblaMainApi || !emblaThumbsApi) return;
+      emblaMainApi.scrollTo(index);
     },
     [emblaMainApi, emblaThumbsApi]
-  )
+  );
   const onSelect = useCallback(() => {
-    if (!emblaMainApi || !emblaThumbsApi) return
-    setSelectedIndex(emblaMainApi.selectedScrollSnap())
-    emblaThumbsApi.scrollTo(emblaMainApi.selectedScrollSnap())
-  }, [emblaMainApi, emblaThumbsApi, setSelectedIndex])
+    if (!emblaMainApi || !emblaThumbsApi) return;
+    setSelectedIndex(emblaMainApi.selectedScrollSnap());
+    emblaThumbsApi.scrollTo(emblaMainApi.selectedScrollSnap());
+  }, [emblaMainApi, emblaThumbsApi, setSelectedIndex]);
 
   useEffect(() => {
-    if (!emblaMainApi) return
-    onSelect()
-    emblaMainApi.on("select", onSelect)
-    emblaMainApi.on("reInit", onSelect)
-  }, [emblaMainApi, onSelect])
+    if (!emblaMainApi) return;
+    onSelect();
+    emblaMainApi.on("select", onSelect);
+    emblaMainApi.on("reInit", onSelect);
+  }, [emblaMainApi, onSelect]);
 
   useEffect(() => {
-    if (!emblaMainApi) return
-    onSelect()
-    emblaMainApi.on("select", onSelect)
-    emblaMainApi.on("reInit", onSelect)
-  }, [emblaMainApi, onSelect])
+    if (!emblaMainApi) return;
+    onSelect();
+    emblaMainApi.on("select", onSelect);
+    emblaMainApi.on("reInit", onSelect);
+  }, [emblaMainApi, onSelect]);
 
   return (
     <div className="max-w-lg flex flex-col gap-4 ">
@@ -82,5 +82,5 @@ export default function Carousel({ images }: { images: ProductImages[] }) {
         </div>
       )}
     </div>
-  )
+  );
 }

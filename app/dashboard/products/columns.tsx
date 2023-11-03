@@ -12,10 +12,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 //Actions
-import { deleteProduct } from "@/app/actions";
+import { deleteProduct } from "@/server/actions";
 import { toast } from "sonner";
-import { startTransition, useTransition } from "react";
+import { useTransition } from "react";
 
 //Delete Wrapper
 async function deleteWrapper(id: number) {
@@ -114,7 +115,11 @@ export const columns: ColumnDef<ProductColumn>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>Quick edit</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href={`/dashboard/add-product?id=${product.id}`}>
+                Quick Edit
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
                 startTransition(async () => {

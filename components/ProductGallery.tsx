@@ -1,21 +1,14 @@
-"use client"
+import Image from "next/image";
+import Link from "next/link";
+import { getProducts } from "@/server/actions";
 
-import Image from "next/image"
-import Link from "next/link"
-import { getProducts } from "@/app/actions"
-import { useSuspenseQuery } from "@tanstack/react-query"
+export default async function ProductGallery() {
+  const products = await getProducts();
 
-export default function ProductGallery() {
-  const { data, error } = useSuspenseQuery({
-    queryKey: ["products"],
-    queryFn: async () => await getProducts(),
-    refetchInterval: 5000,
-  })
-
-  if (data.data)
+  if (products.data)
     return (
       <div className="flex flex-wrap justify-center gap-12">
-        {data.data.map((product) => (
+        {products.data.map((product) => (
           <div className="text-center basis-64 flex-1" key={product.id}>
             <Link className="" href={`/product/${product.id}`}>
               <Image
@@ -32,5 +25,5 @@ export default function ProductGallery() {
           </div>
         ))}
       </div>
-    )
+    );
 }
