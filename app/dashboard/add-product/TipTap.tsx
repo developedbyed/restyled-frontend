@@ -14,13 +14,9 @@ export default function Tiptap({
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        bulletList: {
-          HTMLAttributes: {
-            class: "list-decimal pl-4",
-          },
-        },
+        bulletList: {},
         heading: {
-          levels: [2, 3],
+          levels: [2],
           HTMLAttributes: {
             class: "text-xl font-bold",
             levels: [2],
@@ -32,7 +28,7 @@ export default function Tiptap({
     editorProps: {
       attributes: {
         class:
-          "rounded-md border min-h-[250px] border-input bg-background px-3 py-2 my-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "rounded-md  border border-input bg-background px-3 py-2 my-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
       },
     },
     onUpdate({ editor }) {
@@ -41,7 +37,7 @@ export default function Tiptap({
   })
 
   return (
-    <div className="flex flex-col justify-stretch min-h-[250px]">
+    <div>
       <Toolbar editor={editor} />
       <EditorContent editor={editor} />
     </div>

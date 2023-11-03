@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -8,7 +8,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui/form"
 import {
   Card,
   CardContent,
@@ -16,104 +16,75 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useForm, useFieldArray, DefaultValues } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormType, formSchema } from "@/lib/zodTypes";
-import * as z from "zod";
-import { createProductAction, getProduct } from "@/server/actions";
-import { CldUploadButton } from "next-cloudinary";
-import { GradientPicker } from "./Picker";
-import { Upload } from "lucide-react";
-import Tiptap from "./TipTap";
-import { useTransition } from "react";
-import { Trash2 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
-import BasicFormField from "./BasicFormField";
-
-const constantInputs = [
-  { name: "Title", label: "title", alt: "Pick a short and catchy title!" },
-  { name: "Price", label: "price", alt: "Your product Price" },
-  { name: "Subtitle", label: "subtitle", alt: "A short subtitle" },
-  {
-    name: "description",
-    label: "Description",
-    alt: "Add all the details about your product ✨",
-  },
-] as const;
-
-export const initialFormData: DefaultValues<FormType> = {
-  title: undefined,
-  price: undefined,
-  subtitle: undefined,
-  description: "<p></p>",
-  images: [
-    {
-      image: undefined,
-    },
-  ],
-  variants: [
-    {
-      color: undefined,
-      image: undefined,
-      variantName: undefined,
-    },
-  ],
-};
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { useForm, useFieldArray, DefaultValues } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { FormType, formSchema } from "@/lib/zodTypes"
+import * as z from "zod"
+import { createProductAction, getProduct } from "@/server/actions"
+import { CldUploadButton } from "next-cloudinary"
+import { GradientPicker } from "./Picker"
+import { Upload } from "lucide-react"
+import Tiptap from "./TipTap"
+import { useTransition } from "react"
+import { Trash2 } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { toast } from "sonner"
+import BasicFormField from "./BasicFormField"
+import { initialFormData } from "./form-data"
 
 export default function AddProduct() {
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
-  const params = useSearchParams();
-  const paramId = parseInt(params.getAll("id")[0]);
+  const [isPending, startTransition] = useTransition()
+  const router = useRouter()
+  const params = useSearchParams()
+  const paramId = parseInt(params.getAll("id")[0])
 
   //Helpers
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: initialFormData,
     mode: "onChange",
-  });
+  })
 
   function setRichText(value: string) {
-    form.setValue("description", value, { shouldValidate: true });
+    form.setValue("description", value, { shouldValidate: true })
   }
 
   const setColor = (color: string, index: number) => {
-    form.setValue(`variants.${index}.color`, color);
-  };
+    form.setValue(`variants.${index}.color`, color)
+  }
 
   const imageFields = useFieldArray({
     control: form.control,
     rules: { minLength: 1, required: true },
     name: "images",
-  });
+  })
   //Array for Variants
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     rules: { minLength: 1, required: true },
     name: "variants",
-  });
+  })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
 
     // ✅ This will be type-safe and validated.
     startTransition(async () => {
-      const result = await createProductAction(values);
+      const result = await createProductAction(values)
 
-      toast.loading("Adding your product");
+      toast.loading("Adding your product")
       //Handle Error
       if (result?.error) {
-        console.log(result.error);
-        toast.error(result.error);
+        console.log(result.error)
+        toast.error(result.error)
       } else {
-        toast.success("Product added successfully 😊");
-        form.reset();
-        router.push("/dashboard/products");
+        toast.success("Product added successfully 😊")
+        form.reset()
+        router.push("/dashboard/products")
       }
-    });
+    })
   }
 
   return (
@@ -130,10 +101,24 @@ export default function AddProduct() {
             key={"title"}
             control={form.control}
           />
-          {/* <FormField
-            key={input.name}
+          <BasicFormField
+            name="Subtitle"
+            label="subtitle"
+            alt="A short subtitle"
+            key={"subtitle"}
             control={form.control}
-            name={input.name}
+          />
+          <BasicFormField
+            name="Price"
+            label="price"
+            alt="Your product price"
+            key="price"
+            control={form.control}
+          />
+          <FormField
+            key="description"
+            control={form.control}
+            name="description"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Description</FormLabel>
@@ -143,7 +128,7 @@ export default function AddProduct() {
                 <FormMessage />
               </FormItem>
             )}
-          /> */}
+          />
 
           <Button
             onClick={() => imageFields.append({ image: "" })}
@@ -176,7 +161,7 @@ export default function AddProduct() {
                           ) {
                             imageFields.update(index, {
                               image: info.url as string,
-                            });
+                            })
                           }
                         }}
                         uploadPreset="restyled"
@@ -263,7 +248,7 @@ export default function AddProduct() {
                                   form.setValue(
                                     `variants.${index}.image`,
                                     info.url as string
-                                  );
+                                  )
                                 }
                               }}
                               uploadPreset="restyled"
@@ -310,5 +295,5 @@ export default function AddProduct() {
         </form>
       </Form>
     </div>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   FormControl,
@@ -6,9 +6,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Control, FieldValues } from "react-hook-form";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Control, FieldValues } from "react-hook-form"
 
 export default function BasicFormField({
   name,
@@ -16,10 +16,10 @@ export default function BasicFormField({
   control,
   alt,
 }: {
-  name: string;
-  label: string;
-  control: Control;
-  alt: string;
+  name: string
+  label: string
+  control?: Control<FieldValues>
+  alt: string
 }) {
   return (
     <FormField
@@ -36,5 +36,5 @@ export default function BasicFormField({
         </FormItem>
       )}
     />
-  );
+  )
 }
