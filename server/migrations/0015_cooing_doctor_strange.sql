@@ -1,0 +1,1 @@
+ALTER TABLE "productImages" DROP COLUMN IF EXISTS "size";

@@ -9,20 +9,15 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Paintbrush } from "lucide-react";
+import BasicFormField from "./basic-field";
+import { useFormContext } from "react-hook-form";
+import { FormLabel } from "@/components/ui/form";
 
-export function GradientPicker({
-  background,
-  className,
-  children,
-  setColor,
-  pickerNumber,
-}: {
-  background: string;
-  className?: string;
-  children: React.ReactNode;
-  pickerNumber: number;
-  setColor: (color: string, index: number) => void;
-}) {
+export function GradientPicker({ className }: { className?: string }) {
+  const { watch, setValue } = useFormContext();
+  const background = watch("color");
+
+  console.log(background);
   const mutedPalettes = [
     "#FDE3A7",
     "#F8D573",
@@ -45,15 +40,6 @@ export function GradientPicker({
     "#2B2947",
     "#181430",
     "#76C9BD",
-    "#53BBB7",
-    "#369DA3",
-    "#247489",
-    "#0D5C6C",
-    "#C25700",
-    "#FF6E00",
-    "#FF8A00",
-    "#FFA800",
-    "#FFC702",
   ];
 
   return (
@@ -93,11 +79,11 @@ export function GradientPicker({
               <div
                 key={s}
                 style={{ background: s }}
-                onClick={(e) => setColor(s, pickerNumber)}
+                onClick={() => setValue("color", s)}
                 className="rounded-md h-6 w-6 cursor-pointer active:scale-105 my-2"
               />
             ))}
-            {children}
+            
           </TabsContent>
         </Tabs>
       </PopoverContent>

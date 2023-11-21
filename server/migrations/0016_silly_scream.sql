@@ -1,0 +1,1 @@
+ALTER TABLE "productImages" ADD COLUMN "size" real;

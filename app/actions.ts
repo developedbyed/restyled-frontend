@@ -1,17 +1,17 @@
-"use server"
+"use server";
 
-import { db } from "@/server"
-import { productImages, productVariant, products } from "@/server/schema"
-import { formSchema } from "@/lib/zodTypes"
-import { z } from "zod"
-import { eq } from "drizzle-orm"
-import { revalidatePath } from "next/cache"
+import { db } from "@/server";
+import { productImages, products } from "@/server/schema";
+import { formSchema } from "@/lib/zodTypes";
+import { z } from "zod";
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 //CREATE PRODUCT
 export async function createProductAction(values: z.infer<typeof formSchema>) {
-  const parsedForm = formSchema.safeParse(values)
-
+  const parsedForm = formSchema.safeParse(values);
   if (parsedForm.success) {
+    console.log(parsedForm.data + "parsed");
     try {
       await db.transaction(async (tx) => {
         const data = await tx
@@ -21,31 +21,24 @@ export async function createProductAction(values: z.infer<typeof formSchema>) {
             description: parsedForm.data.description,
             price: parsedForm.data.price,
             subtitle: parsedForm.data.subtitle,
+            color: parsedForm.data.color,
           })
-          .returning({ productID: products.id })
+          .returning({ productID: products.id });
 
         parsedForm.data.images.map(async (image) => {
           await tx.insert(productImages).values({
-            image: image.image,
+            url: image.url,
+            name: image.name,
             productID: data[0].productID,
-          })
-        })
-
-        parsedForm.data.variants.map(async (variant) => {
-          await tx.insert(productVariant).values({
-            color: variant.color,
-            image: variant.image,
-            variantName: variant.variantName,
-            productID: data[0].productID,
-          })
-        })
-      })
-      revalidatePath("/dashboard/products")
+          });
+        });
+      });
+      revalidatePath("/dashboard/products");
     } catch (error) {
-      return { error: "Oh noesss" }
+      return { error: "Oh noesss" };
     }
   } else {
-    return { error: "Something went wrong" }
+    return { error: "Something went wrong" };
   }
 }
 
@@ -54,15 +47,14 @@ export async function getProducts() {
   try {
     const data = await db.query.products.findMany({
       with: {
-        productVariants: true,
         productImages: true,
       },
       orderBy: (products, { desc }) => [desc(products.id)],
-    })
+    });
 
-    return { data }
+    return { data };
   } catch (error) {
-    return { error: `Can't load products...` }
+    return { error: `Can't load products...` };
   }
 }
 
@@ -73,26 +65,25 @@ export async function getProduct(id: number) {
       where: eq(products.id, id),
       with: {
         productImages: true,
-        productVariants: true,
       },
-    })
-    return { data }
+    });
+    return { data };
   } catch (error) {
-    return { error: `Can't load product` }
+    return { error: `Can't load product` };
   }
 }
 
 //Delete a product from the dashboard
 export async function deleteProduct(id: number) {
-  console.log(id)
+  console.log(id);
   try {
     const data = await db
       .delete(products)
       .where(eq(products.id, id))
-      .returning()
-    revalidatePath("/dashboard/products")
-    return { data }
+      .returning();
+    revalidatePath("/dashboard/products");
+    return { data };
   } catch (error) {
-    return { error: "Failed deleting a product 😞" }
+    return { error: "Failed deleting a product 😞" };
   }
 }

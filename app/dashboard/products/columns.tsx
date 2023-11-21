@@ -20,6 +20,7 @@ import { useTransition } from "react";
 
 //Delete Wrapper
 async function deleteWrapper(id: number) {
+  toast.loading("Adding product");
   const data = await deleteProduct(id);
   if (data.error) {
     toast.error("Failed to delete product");
@@ -57,6 +58,7 @@ export const columns: ColumnDef<ProductColumn>[] = [
     header: "Color",
     cell: ({ row }) => {
       const cellColor = row.getValue("color") as string;
+      console.log(cellColor);
       return (
         <div
           style={{ backgroundColor: cellColor }}
@@ -105,7 +107,6 @@ export const columns: ColumnDef<ProductColumn>[] = [
     id: "actions",
     cell: ({ row }) => {
       const product = row.original;
-      const [isPending, startTransition] = useTransition();
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -120,14 +121,7 @@ export const columns: ColumnDef<ProductColumn>[] = [
                 Quick Edit
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() =>
-                startTransition(async () => {
-                  toast.success("Product Deleted 👍");
-                  await deleteProduct(product.id);
-                })
-              }
-            >
+            <DropdownMenuItem onClick={() => deleteWrapper(product.id)}>
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

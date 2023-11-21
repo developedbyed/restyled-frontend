@@ -13,35 +13,16 @@ export const formSchema = z.object({
   subtitle: z.string().min(5, {
     message: "Description must be at least 5 characters.",
   }),
-  price: z.coerce
-    .number()
-    .multipleOf(0.01)
-    .positive()
-    .nullable()
-    .transform((value, ctx): number => {
-      if (value == null)
-        ctx.addIssue({
-          code: "custom",
-          message: "X Cannot be null",
-        });
-      return value ?? NaN;
-    }),
+  price: z.coerce.number(),
+  color: z.string(),
   images: z
     .array(
       z.object({
-        image: z.string().url(),
+        url: z.string().url(),
+        name: z.string(),
       })
     )
-    .nonempty({ message: "One image must be added." }),
-  variants: z
-    .array(
-      z.object({
-        color: z.string().min(4).max(9).regex(/^#/),
-        image: z.string().url(),
-        variantName: z.string().min(5),
-      })
-    )
-    .nonempty({ message: "One product is required." }),
+    .nonempty({ message: "At least one images has to be added." }),
 });
 
 export type FormType = z.infer<typeof formSchema>;

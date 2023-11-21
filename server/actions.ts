@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/server";
-import { productImages, productVariant, products } from "@/server/schema";
+import { productImages, products } from "@/server/schema";
 import { formSchema } from "../lib/zodTypes";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
@@ -10,7 +10,7 @@ import { revalidatePath } from "next/cache";
 //CREATE PRODUCT
 export async function createProductAction(values: z.infer<typeof formSchema>) {
   const parsedForm = formSchema.safeParse(values);
-
+  console.log("hitting action" + parsedForm);
   if (parsedForm.success) {
     try {
       await db.transaction(async (tx) => {
@@ -21,21 +21,14 @@ export async function createProductAction(values: z.infer<typeof formSchema>) {
             description: parsedForm.data.description,
             price: parsedForm.data.price,
             subtitle: parsedForm.data.subtitle,
+            color: parsedForm.data.color,
           })
           .returning({ productID: products.id });
 
         parsedForm.data.images.map(async (image) => {
           await tx.insert(productImages).values({
-            image: image.image,
-            productID: data[0].productID,
-          });
-        });
-
-        parsedForm.data.variants.map(async (variant) => {
-          await tx.insert(productVariant).values({
-            color: variant.color,
-            image: variant.image,
-            variantName: variant.variantName,
+            url: image.url,
+            name: image.name,
             productID: data[0].productID,
           });
         });
@@ -54,7 +47,6 @@ export async function getProducts() {
   try {
     const data = await db.query.products.findMany({
       with: {
-        productVariants: true,
         productImages: true,
       },
       orderBy: (products, { desc }) => [desc(products.id)],
@@ -73,7 +65,6 @@ export async function getProduct(id: number) {
       where: eq(products.id, id),
       with: {
         productImages: true,
-        productVariants: true,
       },
     });
     return { data };

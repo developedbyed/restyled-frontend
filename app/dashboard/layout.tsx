@@ -2,8 +2,8 @@
 
 import "@/app/globals.css";
 import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
 import { usePathname } from "next/navigation";
+import { Card } from "@/components/ui/card";
 
 export default function DashboardLayout({
   children,
@@ -27,10 +27,8 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   return (
-    <>
-      <nav className="max-w-6xl m-auto bg-background text-foreground px-6  ">
-        <h1 className="text-4xl pt-8">Dashboard</h1>
-        <Separator className="my-4" />
+    <div className="max-w-4xl mx-auto">
+      <nav className=" bg-background text-foreground">
         <ul className="flex items-center gap-12 font-lg font-bold text-sm text-muted-foreground">
           {links.map((link) => {
             const isActive = pathname.startsWith(link.path);
@@ -38,7 +36,7 @@ export default function DashboardLayout({
               <li key={link.path}>
                 <Link
                   className={
-                    isActive ? "text-foreground" : "text-muted-foreground"
+                    isActive ? "text-primary" : "text-muted-foreground"
                   }
                   href={link.path}
                 >
@@ -49,7 +47,8 @@ export default function DashboardLayout({
           })}
         </ul>
       </nav>
-      <section className="max-w-5xl m-auto py-6">{children}</section>
-    </>
+
+      <Card className="my-4 p-4">{children}</Card>
+    </div>
   );
 }

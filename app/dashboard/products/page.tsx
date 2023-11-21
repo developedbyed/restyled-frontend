@@ -5,14 +5,15 @@ import { columns } from "./columns";
 export default async function Products() {
   const products = await getProducts();
   if (products.error) return <h2>{products.error}</h2>;
+  console.log(products);
   const dataTable = products.data?.map(
-    ({ id, title, subtitle, price, productVariants }) => ({
+    ({ id, title, subtitle, price, productImages, color }) => ({
       id,
       title,
       subtitle,
       price,
-      image: productVariants[0].image,
-      color: productVariants[0].color,
+      color,
+      image: productImages[0].url,
     })
   );
   if (!dataTable)
