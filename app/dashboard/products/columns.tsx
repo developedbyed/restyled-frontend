@@ -16,16 +16,20 @@ import Link from "next/link";
 //Actions
 import { deleteProduct } from "@/server/actions";
 import { toast } from "sonner";
-import { useTransition } from "react";
 
 //Delete Wrapper
 async function deleteWrapper(id: number) {
-  toast.loading("Adding product");
-  const data = await deleteProduct(id);
-  if (data.error) {
-    toast.error("Failed to delete product");
-  } else {
-    toast.success("Product deleted 👍");
+  toast.loading("Deleting Product product");
+  const res = await deleteProduct(id);
+  const { data, serverError, validationError } = res;
+  if (validationError) {
+    toast.error("Can't find product with this ID");
+  }
+  if (serverError) {
+    toast.error(serverError);
+  }
+  if (data?.data) {
+    toast.success("Added product successfully");
   }
 }
 

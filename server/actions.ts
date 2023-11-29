@@ -6,41 +6,41 @@ import { formSchema } from "../lib/zodTypes";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { createSafeActionClient } from "next-safe-action";
 
-//CREATE PRODUCT
-export async function createProductAction(values: z.infer<typeof formSchema>) {
-  const parsedForm = formSchema.safeParse(values);
-  console.log("hitting action" + parsedForm);
-  if (parsedForm.success) {
+export const action = createSafeActionClient();
+
+export const createProduct = action(
+  formSchema,
+  async ({ title, subtitle, color, price, description, images }) => {
     try {
       await db.transaction(async (tx) => {
         const data = await tx
           .insert(products)
           .values({
-            title: parsedForm.data.title,
-            description: parsedForm.data.description,
-            price: parsedForm.data.price,
-            subtitle: parsedForm.data.subtitle,
-            color: parsedForm.data.color,
+            title,
+            subtitle,
+            description,
+            color,
+            price,
           })
           .returning({ productID: products.id });
-
-        parsedForm.data.images.map(async (image) => {
+        images.map(async (image) => {
           await tx.insert(productImages).values({
             url: image.url,
             name: image.name,
             productID: data[0].productID,
           });
         });
+
+        revalidatePath("/dashboard/products");
+        return { data };
       });
-      revalidatePath("/dashboard/products");
-    } catch (error) {
-      return { error: "Oh noesss" };
+    } catch (err) {
+      return { error: "Failed to create a product" };
     }
-  } else {
-    return { error: "Something went wrong" };
   }
-}
+);
 
 //GET ALL THE PRODUCTS FROM STORE
 export async function getProducts() {
@@ -74,7 +74,9 @@ export async function getProduct(id: number) {
 }
 
 //Delete a product from the dashboard
-export async function deleteProduct(id: number) {
+const deleteProductSchema = z.number();
+
+export const deleteProduct = action(deleteProductSchema, async (id) => {
   try {
     const data = await db
       .delete(products)
@@ -85,4 +87,4 @@ export async function deleteProduct(id: number) {
   } catch (error) {
     return { error: "Failed deleting a product 😞" };
   }
-}
+});

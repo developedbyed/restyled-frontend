@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormType, formSchema } from "@/lib/zodTypes";
 import * as z from "zod";
-import { createProductAction } from "@/server/actions";
+import { createProduct } from "@/server/actions";
 import { useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -33,24 +33,27 @@ export default function AddProduct() {
     mode: "onChange",
   });
 
-  console.log(form.formState.errors);
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // ✅ This will be type-safe and validated.
-    console.log(values + "onsubmit");
-    startTransition(async () => {
-      toast.loading("Adding your product");
-      const result = await createProductAction(values);
-      //Handle Error
-      if (result?.error) {
-        console.log(result.error);
-        toast.error(result.error);
-      } else {
-        toast.success("Product added successfully 😊");
-        form.reset();
-        router.push("/dashboard/products");
-      }
-    });
+
+    toast.loading("Adding your product");
+    const res = await createProduct(values);
+    const { data, serverError, validationError } = res;
+    //Handle Error
+
+    if (validationError) {
+      console.log(validationError);
+      toast.error("Error adding a new product");
+    }
+    if (serverError) {
+      console.log(serverError + "server error");
+    }
+    if (data) {
+      console.log(data);
+      toast.success("Product added successfully 😊");
+      router.push("/dashboard/products");
+    }
+    console.log(data, serverError, validationError);
   }
 
   return (
